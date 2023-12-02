@@ -3,6 +3,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 public class Main02 {
     private static final int RED = 12;
@@ -11,13 +12,13 @@ public class Main02 {
 
     public static void main(String[] args) throws IOException {
         System.out.println("Answer for part 01: " + part01());
-        // System.out.println("Answer for part 02: " + part02());
+        System.out.println("Answer for part 02: " + part02());
     }
 
     private static int part01() throws IOException {
         int sum = 0;
         try (
-                FileReader in = new FileReader(getInputFile("input01.txt"));
+                FileReader in = new FileReader(getInputFile());
                 BufferedReader br = new BufferedReader(in)
         ) {
             String line;
@@ -29,7 +30,13 @@ public class Main02 {
                         .findFirst()
                         .orElse("0"));
 
-                if (isValidGame(line.split(":")[1]))
+                String gameSet = line.split(":")[1];
+                if (Stream.of(gameSet.split(";")).allMatch(set -> {
+                    int red = processColorValue(set, "red");
+                    int green = processColorValue(set, "green");
+                    int blue = processColorValue(set, "blue");
+                    return (red <= RED && green <= GREEN && blue <= BLUE);
+                }))
                     sum += gameId;
             }
         }
@@ -37,25 +44,31 @@ public class Main02 {
         return sum;
     }
 
-//    private static int part02() {
-//        return 0;
-//    }
-
-    private static File getInputFile(String filename) {
-        String dir = Main02.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-        return new File(dir, filename);
-    }
-
-    private static boolean isValidGame(String gameSet) {
-        for (String set : gameSet.split(";")) {
-            int red = processColorValue(set, "red");
-            int green = processColorValue(set, "green");
-            int blue = processColorValue(set, "blue");
-            if (red > RED || green > GREEN || blue > BLUE)
-                return false;
+    private static int part02() throws IOException {
+        int sum = 0;
+        try (
+                FileReader in = new FileReader(getInputFile());
+                BufferedReader br = new BufferedReader(in)
+        ) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String gameSet = line.split(":")[1];
+                int red = 0, green = 0, blue = 0;
+                for (String set : gameSet.split(";")) {
+                    red = Math.max(red, processColorValue(set, "red"));
+                    green = Math.max(green, processColorValue(set, "green"));
+                    blue = Math.max(blue, processColorValue(set, "blue"));
+                }
+                sum += red * green * blue;
+            }
         }
 
-        return true;
+        return sum;
+    }
+
+    private static File getInputFile() {
+        String dir = Main02.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+        return new File(dir, "input.txt");
     }
 
     private static int processColorValue(String set, String color) {
