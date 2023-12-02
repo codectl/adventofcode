@@ -3,6 +3,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Main02 {
@@ -21,8 +22,7 @@ public class Main02 {
                 FileReader in = new FileReader(getInputFile());
                 BufferedReader br = new BufferedReader(in)
         ) {
-            String line;
-            while ((line = br.readLine()) != null) {
+            for (String line : br.lines().toList()) {
                 int gameId = Integer.parseInt(Pattern.compile("Game (\\d+):")
                         .matcher(line)
                         .results()
@@ -50,8 +50,7 @@ public class Main02 {
                 FileReader in = new FileReader(getInputFile());
                 BufferedReader br = new BufferedReader(in)
         ) {
-            String line;
-            while ((line = br.readLine()) != null) {
+            for (String line : br.lines().toList()) {
                 String gameSet = line.split(":")[1];
                 int red = 0, green = 0, blue = 0;
                 for (String set : gameSet.split(";")) {
