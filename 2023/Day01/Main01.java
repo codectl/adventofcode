@@ -2,7 +2,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 
 public class Main01 {
@@ -17,8 +16,7 @@ public class Main01 {
                 FileReader in = new FileReader(getInputFile("input01.txt"));
                 BufferedReader br = new BufferedReader(in)
         ) {
-            String line;
-            while ((line = br.readLine()) != null) {
+            for (String line : br.lines().toList()) {
                 int l = 0, r = line.length() - 1;
                 while (r >= l) {
                     char a = line.charAt(l), b = line.charAt(r);
@@ -49,21 +47,50 @@ public class Main01 {
         );
 
         int sum = 0;
-        List<String> lines;
         try (
                 FileReader in = new FileReader(getInputFile("input02.txt"));
                 BufferedReader br = new BufferedReader(in)
         ) {
-            lines = br.lines().toList();
-        }
+            for (String line : br.lines().toList()) {
+                int l, r;
+                String num = "00";
 
-//        for (String line : lines) {
-//            System.out.println(
-//                    numbers.forEach((k, v) -> {
-//
-//                    });
-//            );
-//        }
+                if (line.chars().anyMatch(Character::isDigit)) {
+                    l = 0;
+                    r = line.length() - 1;
+                    while (r >= l) {
+                        char a = line.charAt(l), b = line.charAt(r);
+                        if (!Character.isDigit(a)) l++;
+                        else if (!Character.isDigit(b)) r--;
+                        else {
+                            num = "" + a + b;
+                            break;
+                        }
+                    }
+                } else {
+                    l = line.length() - 1;
+                    r = 0;
+                }
+
+                for (Map.Entry<String, Integer> entry : numbers.entrySet()) {
+                    if (line.contains(entry.getKey())) {
+                        int i = line.indexOf(entry.getKey());
+                        int j = line.lastIndexOf(entry.getKey());
+                        String value = String.valueOf(entry.getValue());
+
+                        if (l > i) {
+                            l = i;
+                            num = value + num.charAt(1);
+                        }
+                        if (r < j) {
+                            r = j;
+                            num = num.charAt(0) + value;
+                        }
+                    }
+                }
+                sum += Integer.parseInt(num);
+            }
+        }
 
         return sum;
     }
