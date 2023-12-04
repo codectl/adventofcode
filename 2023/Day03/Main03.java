@@ -6,9 +6,7 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 public class Main03 {
 
@@ -61,17 +59,18 @@ public class Main03 {
                                         if (Character.isDigit(c)) return completeNumber(lines.get(m), n);
                                         return String.valueOf(c);
                                     })
-                                    .collect(Collectors.joining("")))
-                            .flatMap(s -> Stream.of(s.split("(?![\\d])."))
-                                    .filter(Predicate.not(String::isEmpty))
-                                    .map(x -> x.length() > 3 ? x.substring(0, (x.length() / 2)) : x)
-                                    .map(Integer::valueOf))
+                                    .reduce(".", (a, b) -> {
+                                        char x = a.charAt(a.length() - 1);
+                                        char y = b.charAt(b.length() - 1);
+                                        if (Character.isDigit(x) && Character.isDigit(y))
+                                            return a;
+                                        return a + b;
+                                    }))
+                            .map(s -> s.replaceAll("(?![\\d]).", ""))
+                            .filter(Predicate.not(String::isEmpty))
+                            .map(Integer::parseInt)
                             .toList();
-                    if (nums.size() > 1) {
-                        System.out.println(matcher.group());
-                        System.out.println(nums);
-                    }
-                    sum += nums.size() > 1 ? nums.get(0) * nums.get(1) : 0;
+                    sum += nums.size() > 1 ? nums.stream().reduce(1, (a, b) -> a * b) : 0;
                 }
             }
         }
@@ -94,6 +93,15 @@ public class Main03 {
             } else break;
         } while (l >= 0 && r < line.length());
         return num.toString();
+    }
+
+    private static boolean isNumber(String s) {
+        try {
+            Integer.valueOf(s);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 
     private static File getInputFile() {
