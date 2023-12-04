@@ -3,7 +3,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Main02 {
@@ -66,7 +65,7 @@ public class Main02 {
     }
 
     private static File getInputFile() {
-        String dir = Main02.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+        String dir = Main04.class.getProtectionDomain().getCodeSource().getLocation().getPath();
         return new File(dir, "input.txt");
     }
 
