@@ -2,6 +2,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
@@ -59,15 +60,15 @@ public class Main03 {
                                         if (Character.isDigit(c)) return completeNumber(lines.get(m), n);
                                         return String.valueOf(c);
                                     })
-                                    .reduce(".", (a, b) -> {
+                                    .reduce(" ", (a, b) -> {
                                         char x = a.charAt(a.length() - 1);
                                         char y = b.charAt(b.length() - 1);
                                         if (Character.isDigit(x) && Character.isDigit(y))
                                             return a;
                                         return a + b;
                                     }))
-                            .map(s -> s.replaceAll("(?![\\d]).", ""))
-                            .filter(Predicate.not(String::isEmpty))
+                            .flatMap(e -> Arrays.stream(e.trim().split("(?![\\d])."))
+                                    .filter(Predicate.not(String::isEmpty)))
                             .map(Integer::parseInt)
                             .toList();
                     sum += nums.size() > 1 ? nums.stream().reduce(1, (a, b) -> a * b) : 0;
@@ -93,15 +94,6 @@ public class Main03 {
             } else break;
         } while (l >= 0 && r < line.length());
         return num.toString();
-    }
-
-    private static boolean isNumber(String s) {
-        try {
-            Integer.valueOf(s);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
-        }
     }
 
     private static File getInputFile() {
